@@ -12,6 +12,11 @@ const CALL_HALT       = 0x00;
 const CALL_RDCHR      = 0x01;
 const CALL_WRCHR      = 0x02;
 
+/* Interrupt flags in 'pending_interrupts' */
+const INT_CLK         = 0x0001;
+const INT_KBD         = 0x0002;
+const INT_MOUSE       = 0x0004;
+
 function debug() {
     // console.log.apply(console, arguments);
 }
@@ -154,6 +159,9 @@ var CPU = {
            })(),
     PC: 0,
     halt: false,
+    pending_interrupts: 0,
+    callback: null,
+    clock: null,
 
     decode: function(op) {
         return {
@@ -171,6 +179,9 @@ var CPU = {
         for (i = 0; i < 32; i ++)
             CPU.regs[i] = 0;
         CPU.halt = false;
+        CPU.pending_interrupts = 0;
+        CPU.callback = null;
+        CPU.clock = null;
     },
 
     step: function() {
@@ -188,16 +199,55 @@ var CPU = {
         CPU.regs[31] = 0;
         debug("decode: ", CPU.instructions[inst.opcode]);
         CPU.instructions[inst.opcode](inst);
+
+        if (CPU.pending_interrupts && !(CPU.PC & PC_SUPERVISOR)) {
+            CPU.process_interrupt();
+        }
     },
 
-    run: function(cb) {
+    process_interrupt: function() {
+        var isr = null;
+        if (CPU.pending_interrupts & INT_CLK) {
+            CPU.pending_interrupts &= ~INT_CLK;
+            isr = ISR_CLK;
+        } else if (CPU.pending_interrutps & INT_KBD) {
+            isr = ISR_KBD;
+        }
+        if (isr) {
+            CPU.regs[XP] = CPU.PC + 4;
+            CPU.PC = isr;
+        }
+    },
+
+    run: function() {
+        var cb, options = {};
+        if (arguments.length == 2) {
+            cb = arguments[1];
+            options = arguments[0];
+        } else {
+            cb = arguments[0];
+        }
+        CPU.callback = cb;
+        if (options.timer) {
+            CPU.clock = setInterval(
+                function() {
+                    debug("clock!");
+                    CPU.pending_interrupts |= INT_CLK;
+                }, 10);
+        }
+        setTimeout(CPU._run, 0);
+    },
+
+    _run: function() {
         var i = 0;
         while (i++ < 100 && !CPU.halt)
             CPU.step();
         if (CPU.halt) {
-            cb();
+            if (CPU.clock)
+                clearInterval(CPU.clock);
+            CPU.callback();
         } else {
-            setTimeout(function() {CPU.run(cb);}, 0);
+            setTimeout(CPU._run, 0);
         }
     },
 

@@ -42,7 +42,7 @@ if (process.argv.length < 3){
             if (e) throw e;
             MMU.load(rom);
             CPU.reset();
-            CPU.run(
+            CPU.run({timer: true},
                 function () {
                     console.log(sprintf.sprintf("[%08x] Done", norm(CPU.PC)));
                     for (var i = 0; i < 32; i++) {
@@ -50,6 +50,7 @@ if (process.argv.length < 3){
                         if (i % 4 == 3)
                             process.stdout.write("\n");
                     }
+                    process.exit(0);
                 });
         })
 }
