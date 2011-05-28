@@ -7,7 +7,7 @@ var MMU = {
     },
     read: function(addr) {
         var ea = (addr & ~PC_SUPERVISOR) >> 2;
-        if (ea >> 2 > MMU.memory.length) {
+        if (ea > MMU.memory.length) {
             throw new Error("Invalid read: " + (addr & ~PC_SUPERVISOR));
         }
         return MMU.memory[ea];
