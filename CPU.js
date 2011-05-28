@@ -190,9 +190,15 @@ var CPU = {
         CPU.instructions[inst.opcode](inst);
     },
 
-    run: function() {
-        while (!CPU.halt)
+    run: function(cb) {
+        var i = 0;
+        while (i++ < 100 && !CPU.halt)
             CPU.step();
+        if (CPU.halt) {
+            cb();
+        } else {
+            setTimeout(function() {CPU.run(cb);}, 0);
+        }
     },
 
     jmp: function(addr) {
