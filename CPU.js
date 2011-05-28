@@ -84,7 +84,7 @@ function callout(op) {
         switch (op.imm) {
         case CALL_HALT:
             debug("CPU halted.");
-            process.exit(0);
+            CPU.halt = true;
             break;
         case CALL_WRCHR:
             process.stdout.write(String.fromCharCode(CPU.regs[op.ra]));
@@ -151,6 +151,8 @@ var CPU = {
                return x;
            })(),
     PC: 0,
+    halt: false,
+
     decode: function(op) {
         return {
             opcode: ((op >> 26) & 0x3F),
@@ -166,6 +168,7 @@ var CPU = {
         CPU.PC = ISR_RESET;
         for (i = 0; i < 32; i ++)
             CPU.regs[i] = 0;
+        CPU.halt = false;
     },
 
     step: function() {
@@ -180,6 +183,11 @@ var CPU = {
         CPU.regs[31] = 0;
         debug("decode: ", CPU.instructions[inst.opcode]);
         CPU.instructions[inst.opcode](inst);
+    },
+
+    run: function() {
+        while (!CPU.halt)
+            CPU.step();
     },
 
     jmp: function(addr) {

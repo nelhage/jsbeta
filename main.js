@@ -1,5 +1,7 @@
 var fs = require('fs');
 
+var sprintf = require('./sprintf.js');
+
 var CPU = require('./CPU.js');
 var MMU = require('./MMU.js');
 
@@ -27,6 +29,9 @@ function parseRom(path, cb) {
                 });
 }
 
+function norm(x) {
+    return x >= 0 ? x : x + 0x100000000;
+}
 
 if (process.argv.length < 3){
     console.log("Usage: " + process.argv[0] + " file.bin");
@@ -35,8 +40,24 @@ if (process.argv.length < 3){
                  if (e) throw e;
                  MMU.load(rom);
                  CPU.reset();
-                 while (1) {
-                     CPU.step();
+                 CPU.run();
+
+                 console.log(sprintf.sprintf("[%08x] Done", norm(CPU.PC)));
+                 for (var i = 0; i < 32; i++) {
+                     process.stdout.write(sprintf.sprintf("[%02d] %08x ", i, norm(CPU.regs[i])));
+                     if (i % 4 == 3)
+                         process.stdout.write("\n");
                  }
+
+                 /*
+                 printf("[%08x] Done\n", CPU.PC);
+                 for(i = 0; i < 32; i++) {
+                     printf("[%02d] %08x ", i, CPU.regs[i]);
+                     if(i % 4 == 3) {
+                         printf("\n");
+                     }
+                 } 
+                 */
+
              })
 }
