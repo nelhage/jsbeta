@@ -90,6 +90,8 @@ function callout(op) {
             process.stdout.write(String.fromCharCode(CPU.regs[op.ra]));
             break;
         }
+    } else {
+        invalid(op);
     }
 }
 
