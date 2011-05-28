@@ -1,4 +1,4 @@
-var fs = require('fs');
+var sprintf = require('./sprintf.js');
 
 const XP              = 30;
 const PC_SUPERVISOR   = 0x80000000;
@@ -172,13 +172,16 @@ var CPU = {
     },
 
     step: function() {
-        debug("PC:", (CPU.PC & ~PC_SUPERVISOR).toString(16));
+        debug(sprintf.sprintf("PC: %d:%08x",
+                              (CPU.PC & PC_SUPERVISOR) ? 1 : 0,
+                              (CPU.PC & ~PC_SUPERVISOR)));
         var opcode = MMU.read(CPU.PC);
         var inst = CPU.decode(opcode);
         debug("decode:", inst);
-        debug("regs: ", CPU.regs[inst.ra].toString(16), 
-                    CPU.regs[inst.rb].toString(16),
-                    CPU.regs[inst.rc].toString(16));
+        debug(sprintf.sprintf("regs: %x %x %x",
+                              CPU.regs[inst.ra],
+                              CPU.regs[inst.rb],
+                              CPU.regs[inst.rc]));
         CPU.PC += 4;
         CPU.regs[31] = 0;
         debug("decode: ", CPU.instructions[inst.opcode]);
