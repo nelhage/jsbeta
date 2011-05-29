@@ -1,4 +1,5 @@
 var fs = require('fs');
+var tty = require('tty');
 
 var sprintf = require('./sprintf.js');
 
@@ -55,7 +56,15 @@ if (process.argv.length < 3){
                         if (i % 4 == 3)
                             process.stdout.write("\n");
                     }
+                    tty.setRawMode(false);
                     process.exit(0);
                 });
-        })
+        });
+    tty.setRawMode(true);
+    process.stdin.resume();
+    process.stdin.on(
+        'keypress',
+        function (ch, key) {
+            CPU.press_key(ch.charCodeAt(0));
+    });
 }
