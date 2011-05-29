@@ -96,9 +96,12 @@ function callout(op) {
                 CPU.config.write(CPU.regs[op.ra]);
             break;
         case CALL_RDCHR:
-            CPU.regs[0] = CPU.next_key;
-            CPU.next_key = 0;
-            CPU.pending_interrupts &= ~INT_KBD;
+            if (CPU.key_buffer.length)
+                CPU.regs[0] = CPU.key_buffer.shift();
+            else
+                CPU.regs[0] = 0;
+            if (CPU.key_buffer.length == 0)
+                CPU.pending_interrupts &= ~INT_KBD;
             break;
         }
     } else {
@@ -169,7 +172,7 @@ var CPU = {
     callback: null,
     config: null,
     clock: null,
-    next_key: 0,
+    key_buffer: [],
 
     decode: function(op) {
         return {
@@ -191,7 +194,7 @@ var CPU = {
         CPU.callback = null;
         CPU.config = {};
         CPU.clock = null;
-        CPU.next_key = 0;
+        CPU.key_buffer = [];
     },
 
     step: function() {
@@ -251,7 +254,7 @@ var CPU = {
 
     _run: function() {
         var i = 0;
-        while (i++ < 100 && !CPU.halt)
+        while (i++ < 1000 && !CPU.halt)
             CPU.step();
         if (CPU.halt) {
             if (CPU.clock)
@@ -264,7 +267,7 @@ var CPU = {
 
     press_key: function(ch) {
         CPU.pending_interrupts |= INT_KBD;
-        CPU.next_key = ch;
+        CPU.key_buffer.push(ch);
     },
 
     jmp: function(addr) {
