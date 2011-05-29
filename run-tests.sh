@@ -34,3 +34,6 @@ run_one align    "[00] ffffabcd"
 run_one qsort    "[00] 00001111"
 run_one jmptab   "[00] 00000007" "Hello."
 run_one trap     "Invalid read"
+
+ulimit -t 2
+run_one timer    "[00] ffffabcd"
