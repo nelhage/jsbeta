@@ -33,6 +33,10 @@ function norm(x) {
     return x >= 0 ? x : x + 0x100000000;
 }
 
+function writeChar(ch) {
+    process.stdout.write(String.fromCharCode(ch));
+}
+
 if (process.argv.length < 3){
     console.log("Usage: " + process.argv[0] + " file.bin");
 } else {
@@ -42,7 +46,8 @@ if (process.argv.length < 3){
             if (e) throw e;
             MMU.load(rom);
             CPU.reset();
-            CPU.run({timer: true},
+            CPU.run({timer: true,
+                     write: writeChar},
                 function () {
                     console.log(sprintf.sprintf("[%08x] Done", norm(CPU.PC)));
                     for (var i = 0; i < 32; i++) {

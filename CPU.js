@@ -92,7 +92,8 @@ function callout(op) {
             CPU.halt = true;
             break;
         case CALL_WRCHR:
-            process.stdout.write(String.fromCharCode(CPU.regs[op.ra]));
+            if (CPU.config.write)
+                CPU.config.write(CPU.regs[op.ra]);
             break;
         }
     } else {
@@ -161,6 +162,7 @@ var CPU = {
     halt: false,
     pending_interrupts: 0,
     callback: null,
+    config: null,
     clock: null,
 
     decode: function(op) {
@@ -181,6 +183,7 @@ var CPU = {
         CPU.halt = false;
         CPU.pending_interrupts = 0;
         CPU.callback = null;
+        CPU.config = {};
         CPU.clock = null;
     },
 
@@ -227,6 +230,7 @@ var CPU = {
         } else {
             cb = arguments[0];
         }
+        CPU.config = options;
         CPU.callback = cb;
         if (options.timer) {
             CPU.clock = setInterval(
