@@ -4,51 +4,14 @@
     <script language="javascript" type="text/javascript" src="termlib/termlib.js"></script>
     <script language="javascript" type="text/javascript" src="CPU.js"></script>
     <script language="javascript" type="text/javascript" src="MMU.js"></script>
+    <script language="javascript" type="text/javascript" src="betaweb.js"></script>
     <script language="javascript" type="text/javascript" src="sprintf.js"></script>
     <script language="javascript" type="text/javascript" src="tests/hello.js"></script>
     <script language="javascript" type="text/javascript" src="tests/lab8.js"></script>
     <script language="javascript" type="text/javascript" src="tests/litmus.js"></script>
     <link rel="stylesheet" type="text/css" href="termlib/term_styles.css" />
-    <script language="javascript" type="text/javascript">
-      var term;
-
-      function openTerm() {
-          term = new Terminal( {handler: termHandler, initHandler: initTerm} );
-          term.charMode = true;
-          term.open();
-
-          MMU.load(lab8_rom);
-          CPU.reset({timer: true,
-                   write: function(ch){
-                      if (ch == 10)
-                        term.newLine();
-                      else
-                        term.type(String.fromCharCode(ch));
-                      },
-                   halt: function() {
-                     term.type("--- Program terminated ----");
-                   }});
-          CPU.run();
-
-          var div = document.getElementById('termDiv');
-          div.onmousedown = mouseHandler;
-      }
-
-      function initTerm() {
-        this.lock = false;
-      }
-      function termHandler() {
-        var ch = this.inputChar;
-        if (ch == 13) ch = 10;
-        CPU.press_key(ch);
-      }
-      function mouseHandler(evt) {
-        CPU.click(evt.x, evt.y);
-      }
-
-    </script>
   </head>
-  <body onload="openTerm();">
+  <body onload="initBeta();">
     <div id='termDiv'>
     </div>
 
