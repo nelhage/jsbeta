@@ -46,19 +46,19 @@ if (process.argv.length < 3){
         function (e, rom) {
             if (e) throw e;
             MMU.load(rom);
-            CPU.reset();
-            CPU.run({timer: true,
-                     write: writeChar},
-                function () {
-                    console.log(sprintf.sprintf("[%08x] Done", norm(CPU.PC)));
-                    for (var i = 0; i < 32; i++) {
-                        process.stdout.write(sprintf.sprintf("[%02d] %08x ", i, norm(CPU.regs[i])));
-                        if (i % 4 == 3)
-                            process.stdout.write("\n");
-                    }
-                    tty.setRawMode(false);
-                    process.exit(0);
-                });
+            CPU.reset({timer: true,
+                       write: writeChar,
+                       halt: function () {
+                           console.log(sprintf.sprintf("[%08x] Done", norm(CPU.PC)));
+                           for (var i = 0; i < 32; i++) {
+                               process.stdout.write(sprintf.sprintf("[%02d] %08x ", i, norm(CPU.regs[i])));
+                               if (i % 4 == 3)
+                                   process.stdout.write("\n");
+                           }
+                           tty.setRawMode(false);
+                           process.exit(0);
+                       }});
+            CPU.run();
         });
     tty.setRawMode(true);
     process.stdin.resume();

@@ -169,9 +169,9 @@ var CPU = {
     PC: 0,
     halt: false,
     pending_interrupts: 0,
-    callback: null,
     config: null,
     clock: null,
+    run_timer: null,
     key_buffer: [],
 
     decode: function(op) {
@@ -184,16 +184,17 @@ var CPU = {
         };
     },
 
-    reset: function() {
+    reset: function(config) {
         var i;
+        CPU.config = config;
         CPU.PC = ISR_RESET;
         for (i = 0; i < 32; i ++)
             CPU.regs[i] = 0;
         CPU.halt = false;
         CPU.pending_interrupts = 0;
         CPU.callback = null;
-        CPU.config = {};
         CPU.clock = null;
+        CPU.run_timer = null;
         CPU.key_buffer = [];
     },
 
@@ -234,24 +235,23 @@ var CPU = {
         }
     },
 
+    pause: function() {
+        clearTimeout(CPU.run_timer);
+        if (CPU.clock)
+            clearInterval(CPU.clock);
+        CPU.run_timer = null;
+        CPU.clock = null;
+    },
+
     run: function() {
-        var cb, options = {};
-        if (arguments.length == 2) {
-            cb = arguments[1];
-            options = arguments[0];
-        } else {
-            cb = arguments[0];
-        }
-        CPU.config = options;
-        CPU.callback = cb;
-        if (options.timer) {
+        if (CPU.config.timer) {
             CPU.clock = setInterval(
                 function() {
                     debug("clock!");
                     CPU.pending_interrupts |= INT_CLK;
                 }, 10);
         }
-        setTimeout(CPU._run, 0);
+        CPU.run_timer = setTimeout(CPU._run, 0);
     },
 
     _run: function() {
@@ -261,7 +261,7 @@ var CPU = {
         if (CPU.halt) {
             if (CPU.clock)
                 clearInterval(CPU.clock);
-            CPU.callback();
+            if (CPU.config.halt) CPU.config.halt();
         } else {
             setTimeout(CPU._run, 0);
         }

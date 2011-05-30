@@ -17,19 +17,18 @@
           term.charMode = true;
           term.open();
 
-          MMU.load(litmus_rom);
-          CPU.reset();
-          CPU.run({timer: true,
+          MMU.load(lab8_rom);
+          CPU.reset({timer: true,
                    write: function(ch){
                       if (ch == 10)
                         term.newLine();
                       else
                         term.type(String.fromCharCode(ch));
-                      }
-                   },
-                   function() {
+                      },
+                   halt: function() {
                      term.type("--- Program terminated ----");
-                   });
+                   }});
+          CPU.run();
       }
 
       function initTerm() {
