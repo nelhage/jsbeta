@@ -269,14 +269,21 @@ var CPU = {
         CPU.run_timer = setTimeout(CPU._run, 0);
     },
 
+    running: function() {
+        return CPU.run_timer !== null;
+    },
+
     _run: function() {
+        if (!CPU.run_timer)
+            return;
         var i = 0;
         while (i++ < 1000 && !CPU.halt)
             CPU.step();
         if (CPU.halt) {
             if (CPU.clock)
                 clearInterval(CPU.clock);
-            if (CPU.config.halt) CPU.config.halt();
+            if (CPU.config.halt)
+                CPU.config.halt();
         } else {
             setTimeout(CPU._run, 0);
         }
