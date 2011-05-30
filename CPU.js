@@ -9,6 +9,7 @@ const ISR_MOUSE       = (PC_SUPERVISOR | 0x00000010);
 const CALL_HALT       = 0x00;
 const CALL_RDCHR      = 0x01;
 const CALL_WRCHR      = 0x02;
+const CALL_MOUSE      = 0x05;
 
 /* Interrupt flags in 'pending_interrupts' */
 const INT_CLK         = 0x0001;
@@ -102,6 +103,16 @@ function callout(op) {
             if (CPU.key_buffer.length == 0)
                 CPU.pending_interrupts &= ~INT_KBD;
             break;
+        case CALL_MOUSE:
+            var mouse;
+            if (CPU.mouse) {
+                mouse = (CPU.mouse.x << 16) | (CPU.mouse.y & 0xFFFF);
+                CPU.mouse = null;
+            } else {
+                mouse = -1;
+            }
+            CPU.regs[0] = mouse;
+            CPU.pending_interrupts &= ~INT_MOUSE;
         }
     } else {
         invalid(op);
@@ -173,6 +184,7 @@ var CPU = {
     clock: null,
     run_timer: null,
     key_buffer: [],
+    mouse: null,
 
     decode: function(op) {
         return {
@@ -196,6 +208,7 @@ var CPU = {
         CPU.clock = null;
         CPU.run_timer = null;
         CPU.key_buffer = [];
+        CPU.mouse = null;
     },
 
     step: function() {
@@ -228,6 +241,8 @@ var CPU = {
             isr = ISR_CLK;
         } else if (CPU.pending_interrupts & INT_KBD) {
             isr = ISR_KBD;
+        } else if (CPU.pending_interrupts & INT_MOUSE) {
+            isr = ISR_MOUSE;
         }
         if (isr) {
             CPU.regs[XP] = CPU.PC + 4;
@@ -270,6 +285,11 @@ var CPU = {
     press_key: function(ch) {
         CPU.pending_interrupts |= INT_KBD;
         CPU.key_buffer.push(ch);
+    },
+
+    click: function(x, y) {
+        CPU.mouse = {x:x, y:y};
+        CPU.pending_interrupts |= INT_MOUSE;
     },
 
     jmp: function(addr) {

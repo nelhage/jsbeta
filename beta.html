@@ -29,6 +29,9 @@
                      term.type("--- Program terminated ----");
                    }});
           CPU.run();
+
+          var div = document.getElementById('termDiv');
+          div.onmousedown = mouseHandler;
       }
 
       function initTerm() {
@@ -38,6 +41,9 @@
         var ch = this.inputChar;
         if (ch == 13) ch = 10;
         CPU.press_key(ch);
+      }
+      function mouseHandler(evt) {
+        CPU.click(evt.x, evt.y);
       }
 
     </script>
