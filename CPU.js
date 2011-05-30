@@ -16,7 +16,8 @@ const INT_KBD         = 0x0002;
 const INT_MOUSE       = 0x0004;
 
 function debug() {
-    // console.log.apply(console, arguments);
+    // document.getElementById('debugLog').textContent += sprintf.sprintf.apply(null, arguments) + "\n";
+    // console.log(sprintf.sprintf.apply(null, arguments));
 }
 
 function sext16_32(v){
@@ -202,14 +203,16 @@ var CPU = {
               (CPU.PC & ~PC_SUPERVISOR));
         var opcode = MMU.read(CPU.PC);
         var inst = CPU.decode(opcode);
-        debug("decode:", inst);
+        CPU.PC += 4;
+        CPU.regs[31] = 0;
+        debug("decode: op=%x imm=%x regs=%x/%x/%x",
+              inst.opcode, inst.imm,
+              inst.ra, inst.rb, inst.rc);
         debug("regs: %x %x %x",
               CPU.regs[inst.ra],
               CPU.regs[inst.rb],
               CPU.regs[inst.rc]);
-        CPU.PC += 4;
-        CPU.regs[31] = 0;
-        debug("decode: ", CPU.instructions[inst.opcode]);
+        debug("decode: %s", CPU.instructions[inst.opcode]);
         CPU.instructions[inst.opcode](inst);
 
         if (CPU.pending_interrupts && !(CPU.PC & PC_SUPERVISOR)) {
@@ -270,7 +273,7 @@ var CPU = {
     },
 
     jmp: function(addr) {
-        debug("jump", addr.toString(16));
+        debug("jump %x", addr);
         CPU.PC = (addr & (0x7FFFFFFC | (CPU.PC & PC_SUPERVISOR)));
     },
 
