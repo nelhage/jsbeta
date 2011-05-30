@@ -10,9 +10,20 @@
     <script language="javascript" type="text/javascript" src="tests/lab8.js"></script>
     <script language="javascript" type="text/javascript" src="tests/litmus.js"></script>
     <link rel="stylesheet" type="text/css" href="termlib/term_styles.css" />
+    <link rel="stylesheet" type="text/css" href="beta.css" />
   </head>
   <body onload="initBeta();">
-    <div id='termDiv'>
+    <div id='beta'>
+      <div id='termDiv'>
+      </div>
+      <div id='controls'>
+        <input id='resetbutton' type="button" value="reset" onclick='resetBeta();'/>
+        <input id='playplausebutton' type="button" value="run" onclick='playPauseBeta();'/>
+        <div id='betapc'>
+        </div>
+      </div>
+    </div>
+    <div id="rightcol">
     </div>
 
     <!--

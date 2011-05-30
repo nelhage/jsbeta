@@ -1,0 +1,14 @@
+#beta {
+    float: left;
+}
+
+#controls {
+    padding: 2px;
+    margin: 5px;
+    border: 3px double black;
+}
+
+#rightcol {
+    float: right;
+    height: 100%;
+}
