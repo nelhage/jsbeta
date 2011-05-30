@@ -58,7 +58,9 @@ Changelog:
  - initial release
 **/
 
-exports.sprintf = (function() {
+var sprintf = {};
+
+sprintf.sprintf = (function() {
 	function get_type(variable) {
 		return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase();
 	}
@@ -177,7 +179,6 @@ exports.sprintf = (function() {
 	return str_format;
 })();
 
-exports.vsprintf = function(fmt, argv) {
-	argv.unshift(fmt);
-	return sprintf.apply(null, argv);
-};
+try {
+    module.exports = sprintf;
+} catch(e) {}
