@@ -1,5 +1,3 @@
-var sprintf = require('./sprintf.js');
-
 const XP              = 30;
 const PC_SUPERVISOR   = 0x80000000;
 const ISR_RESET       = (PC_SUPERVISOR | 0x00000000);
@@ -154,6 +152,7 @@ function arithc(fn) {
 }
 
 var CPU = {
+    PC_SUPERVISOR: PC_SUPERVISOR,
     /*
      * Registers are maintained as integers in [-2**31, 2**31), and
      * converted appropriately if an unsigned interpretation is needed
@@ -198,16 +197,16 @@ var CPU = {
     },
 
     step: function() {
-        debug(sprintf.sprintf("PC: %d:%08x",
-                              (CPU.PC & PC_SUPERVISOR) ? 1 : 0,
-                              (CPU.PC & ~PC_SUPERVISOR)));
+        debug("PC: %d:%08x",
+              (CPU.PC & PC_SUPERVISOR) ? 1 : 0,
+              (CPU.PC & ~PC_SUPERVISOR));
         var opcode = MMU.read(CPU.PC);
         var inst = CPU.decode(opcode);
         debug("decode:", inst);
-        debug(sprintf.sprintf("regs: %x %x %x",
-                              CPU.regs[inst.ra],
-                              CPU.regs[inst.rb],
-                              CPU.regs[inst.rc]));
+        debug("regs: %x %x %x",
+              CPU.regs[inst.ra],
+              CPU.regs[inst.rb],
+              CPU.regs[inst.rc]);
         CPU.PC += 4;
         CPU.regs[31] = 0;
         debug("decode: ", CPU.instructions[inst.opcode]);
@@ -327,7 +326,7 @@ var CPU = {
     ]
 };
 
-if (module !== undefined) {
+try {
     module.exports = CPU;
     var MMU = require('./MMU.js');
-}
+} catch (e) {};
