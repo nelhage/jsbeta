@@ -1,7 +1,7 @@
 var MMU = {
     memory: [],
     load: function (mem) {
-        MMU.memory = mem.map(function(x){return x;});
+        MMU.memory = mem.map(function(x){return x&0xFFFFFFFF;});
     },
     read: function(addr) {
         var ea = (addr & ~CPU.PC_SUPERVISOR) >> 2;
