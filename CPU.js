@@ -274,8 +274,6 @@ var CPU = {
     },
 
     _run: function() {
-        if (!CPU.run_timer)
-            return;
         var i = 0;
         while (i++ < 1000 && !CPU.halt)
             CPU.step();
@@ -285,7 +283,7 @@ var CPU = {
             if (CPU.config.halt)
                 CPU.config.halt();
         } else {
-            setTimeout(CPU._run, 0);
+            CPU.run_timer = setTimeout(CPU._run, 0);
         }
     },
 
