@@ -1,5 +1,11 @@
 var betaTerm;
 var betaDiv;
+var betaROMs = [];
+
+function BetaROM(name, rom) {
+    this.name = name;
+    this.rom  = rom;
+}
 
 function initBeta() {
     betaTerm = new Terminal( {handler: termHandler, initHandler: initTerm} );
@@ -8,13 +14,33 @@ function initBeta() {
 
     betaDiv = document.getElementById('termDiv');
     betaDiv.onmousedown = mouseHandler;
+
+    var select = document.getElementById('romselector');
+    var i, option;
+    while (select.firstChild)
+        select.removeChild(select.firstChild);
+    for (i = 0; i < betaROMs.length; i++) {
+        option = document.createElement('option');
+        option.value = i;
+        option.appendChild(document.createTextNode(betaROMs[i].name));
+        select.appendChild(option);
+    }
+
     resetBeta();
 }
 
-function resetBeta() {
+function loadROM() {
+    var select = document.getElementById('romselector');
+    var rom = betaROMs[select.children[select.selectedIndex].value];
+    resetBeta(rom)
+}
+
+function resetBeta(rom) {
+    if (rom === undefined)
+        rom = betaROMs[0];
     betaTerm.clear();
 
-    MMU.load(lab8_rom);
+    MMU.load(rom.rom);
     CPU.reset({timer: true,
                write: function(ch){
                    if (ch == 10)
@@ -23,7 +49,7 @@ function resetBeta() {
                        betaTerm.type(String.fromCharCode(ch));
                },
                halt: function() {
-                   term.type("--- Program terminated ----");
+                   betaTerm.type("--- Program terminated ----");
                }});
     playPauseBeta();
 }
