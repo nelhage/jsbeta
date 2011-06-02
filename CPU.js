@@ -198,6 +198,7 @@ var CPU = {
 
     reset: function(config) {
         var i;
+        CPU.pause();
         CPU.config = config;
         CPU.PC = ISR_RESET;
         for (i = 0; i < 32; i ++)
@@ -205,8 +206,6 @@ var CPU = {
         CPU.halt = false;
         CPU.pending_interrupts = 0;
         CPU.callback = null;
-        CPU.clock = null;
-        CPU.run_timer = null;
         CPU.key_buffer = [];
         CPU.mouse = null;
     },
@@ -251,10 +250,11 @@ var CPU = {
     },
 
     pause: function() {
-        clearTimeout(CPU.run_timer);
+        if (CPU.run_timer)
+            clearTimeout(CPU.run_timer);
+        CPU.run_timer = null;
         if (CPU.clock)
             clearInterval(CPU.clock);
-        CPU.run_timer = null;
         CPU.clock = null;
     },
 
