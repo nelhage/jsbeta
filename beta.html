@@ -6,15 +6,13 @@
     <script language="javascript" type="text/javascript" src="MMU.js"></script>
     <script language="javascript" type="text/javascript" src="betaweb.js"></script>
     <script language="javascript" type="text/javascript" src="sprintf.js"></script>
-    <script language="javascript" type="text/javascript" src="tests/hello.js"></script>
-    <script language="javascript" type="text/javascript" src="tests/lab8.js"></script>
-    <script language="javascript" type="text/javascript" src="tests/litmus.js"></script>
+    <script language="javascript" type="text/javascript" src="lib/jquery.js"></script>
     <link rel="stylesheet" type="text/css" href="termlib/term_styles.css" />
     <link rel="stylesheet" type="text/css" href="beta.css" />
     <script language="javascript" type="text/javascript">
-      betaROMs.push(new BetaROM("Lab 8", lab8_rom));
-      betaROMs.push(new BetaROM("litmus", litmus_rom));
-      betaROMs.push(new BetaROM("hello", hello_rom));
+      betaROMs.push(new BetaROM("Lab 8", "lab8"));
+      betaROMs.push(new BetaROM("litmus", "litmus"));
+      betaROMs.push(new BetaROM("hello", "hello"));
     </script>
   </head>
   <body onload="initBeta();">
