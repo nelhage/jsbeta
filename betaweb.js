@@ -98,30 +98,36 @@ function resetBeta(rom) {
                },
                halt: function() {
                    betaTerm.type("--- Program terminated ----");
+                   refreshDisplay();
                }});
     playPauseBeta();
 }
 
 function playPauseBeta() {
-    var button = document.getElementById('playplausebutton');
-    if (!button)
-        return;
-    if(CPU.running()) {
+    if(CPU.running())
         CPU.pause();
-        button.value="run";
-    } else {
+    else
         CPU.run();
-        button.value="pause";
-    }
     refreshDisplay();
 }
 
 function refreshDisplay() {
     var div = document.getElementById('pcval');
-    if (CPU.running())
-        div.textContent = "<running>";
-    else
-        div.textContent = toHex(CPU.PC);
+    var button = document.getElementById('playpausebutton');
+
+    if (CPU.halt) {
+        div.textContent = "<stopped>";
+        button.disabled = true;
+    } else {
+        button.disabled = false;
+        if (CPU.running()) {
+            div.textContent = "<running>";
+            button.value = "pause";
+        } else {
+            div.textContent = toHex(CPU.PC);
+            button.value = "run";
+        }
+    }
 }
 
 function initTerm() {
