@@ -8,10 +8,6 @@
     border: 3px double black;
 }
 
-#rightcol {
-    float: right;
-}
-
 #cpucontrol {
     float: left;
 }
@@ -22,6 +18,8 @@
 
 #registers {
     font-family: mono;
+    float: left;
+    padding: 2em;
 }
 
 #PC {
@@ -41,10 +39,14 @@
     padding-left: 1em;
 }
 
+#memcol {
+    float: right;
+}
+
 #memory {
     border: 1px solid black;
     overflow-y: scroll;
-    height: 100%;
+    height: 90%;
 }
 
 
