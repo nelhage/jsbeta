@@ -1,10 +1,16 @@
-var betaTerm;
-var betaDiv;
-var betaROMs = [];
+var BETA = {
+    term: null,
+    div: null,
+    ROMs: [],
+    regCells: [],
+};
 
 function toHex(x) {
     if (x < 0) x += 0x80000000;
-    return x.toString(16);
+    var str = x.toString(16);
+    while (str.length < 8)
+        str = '0' + str;
+    return str;
 }
 
 function BetaROM(desc, path) {
@@ -48,22 +54,33 @@ BetaROM.prototype.load = function (success, fail) {
 }
 
 function initBeta() {
-    betaTerm = new Terminal( {handler: termHandler, initHandler: initTerm} );
-    betaTerm.charMode = true;
-    betaTerm.open();
+    BETA.term = new Terminal( {handler: termHandler, initHandler: initTerm} );
+    BETA.term.charMode = true;
+    BETA.term.open();
 
-    betaDiv = document.getElementById('termDiv');
-    betaDiv.onmousedown = mouseHandler;
+    BETA.div = document.getElementById('termDiv');
+    BETA.div.onmousedown = mouseHandler;
 
     var select = document.getElementById('romselector');
-    var i, option;
+    var i, j, option;
     while (select.firstChild)
         select.removeChild(select.firstChild);
-    for (i = 0; i < betaROMs.length; i++) {
+    for (i = 0; i < BETA.ROMs.length; i++) {
         option = document.createElement('option');
         option.value = i;
-        option.appendChild(document.createTextNode(betaROMs[i].desc));
+        option.appendChild(document.createTextNode(BETA.ROMs[i].desc));
         select.appendChild(option);
+    }
+
+    var table = document.getElementById('regtab');
+    var rows = table.rows;
+    var cells;
+    for (i = 0; i < rows.length; i++){
+        cells = rows[i].cells;
+        for (j = 0; j < cells.length; j++) {
+            if (cells[j].nodeName == 'TD')
+                BETA.regCells.push(cells[j]);
+        }
     }
 
     $.ajaxSetup({
@@ -77,7 +94,7 @@ function initBeta() {
 
 function loadROM() {
     var select = document.getElementById('romselector');
-    var rom = betaROMs[select.children[select.selectedIndex].value];
+    var rom = BETA.ROMs[select.children[select.selectedIndex].value];
     rom.load(function() {
         resetBeta(rom);
     }, function (rom, err) {
@@ -86,18 +103,18 @@ function loadROM() {
 }
 
 function resetBeta(rom) {
-    betaTerm.clear();
+    BETA.term.clear();
 
     MMU.load(rom.rom);
     CPU.reset({timer: true,
                write: function(ch){
                    if (ch == 10)
-                       betaTerm.newLine();
+                       BETA.term.newLine();
                    else
-                       betaTerm.type(String.fromCharCode(ch));
+                       BETA.term.type(String.fromCharCode(ch));
                },
                halt: function() {
-                   betaTerm.type("--- Program terminated ----");
+                   BETA.term.type("--- Program terminated ----");
                    refreshDisplay();
                }});
     playPauseBeta();
@@ -114,6 +131,7 @@ function playPauseBeta() {
 function refreshDisplay() {
     var div = document.getElementById('pcval');
     var button = document.getElementById('playpausebutton');
+    var i;
 
     if (CPU.halt) {
         div.textContent = "<stopped>";
@@ -128,6 +146,9 @@ function refreshDisplay() {
             button.value = "run";
         }
     }
+
+    for (i = 0; i < 31; i++)
+        BETA.regCells[i].textContent = toHex(CPU.regs[i]);
 }
 
 function initTerm() {

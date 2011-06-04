@@ -20,7 +20,23 @@
     float: right;
 }
 
+#registers {
+    font-family: mono;
+}
+
 #PC {
     text-align: center;
-    font-family: mono;
+}
+
+#regtab {
+    margin: auto;
+    border-collapse: collapse;
+}
+
+#regtab td, #regtab th {
+    border: 1px solid black;
+}
+
+#regtab th {
+    padding-left: 1em;
 }
