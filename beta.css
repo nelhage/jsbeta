@@ -10,5 +10,17 @@
 
 #rightcol {
     float: right;
-    height: 100%;
+}
+
+#cpucontrol {
+    float: left;
+}
+
+#romcontrol {
+    float: right;
+}
+
+#PC {
+    text-align: center;
+    font-family: mono;
 }

@@ -2,6 +2,11 @@ var betaTerm;
 var betaDiv;
 var betaROMs = [];
 
+function toHex(x) {
+    if (x < 0) x += 0x80000000;
+    return x.toString(16);
+}
+
 function BetaROM(desc, path) {
     this.desc = desc;
     this.path = path;
@@ -108,6 +113,15 @@ function playPauseBeta() {
         CPU.run();
         button.value="pause";
     }
+    refreshDisplay();
+}
+
+function refreshDisplay() {
+    var div = document.getElementById('pcval');
+    if (CPU.running())
+        div.textContent = "<running>";
+    else
+        div.textContent = toHex(CPU.PC);
 }
 
 function initTerm() {

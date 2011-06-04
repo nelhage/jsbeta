@@ -20,17 +20,25 @@
       <div id='termDiv'>
       </div>
       <div id='controls'>
-        <input id='resetbutton' type="button" value="reset" onclick='resetBeta();'/>
-        <input id='playplausebutton' type="button" value="run" onclick='playPauseBeta();'/>
-        Load ROM:
-        <select id='romselector'>
-          <option></option>
-        </select>
-        <input id='loadrombutton' type="button" value="Go!" onclick='loadROM();'/>
-        <div id='betapc'>
+        <div id='cpucontrol'>
+          <input id='resetbutton' type="button" value="reset" onclick='resetBeta();'/>
+          <input id='playplausebutton' type="button" value="run" onclick='playPauseBeta();'/>
         </div>
+        <div id='romcontrol'>
+          Load ROM:
+          <select id='romselector'>
+            <option></option>
+          </select>
+          <input id='loadrombutton' type="button" value="Go!" onclick='loadROM();'/>
+        </div>
+        <div style='clear: both' />
       </div>
     </div>
+    <div id='registers'>
+        <div id='PC'>
+          PC: <span id='pcval'>00000000</span>
+        </div>
+      </div>
     <div id="rightcol">
     </div>
 
