@@ -80,7 +80,7 @@ function initBeta() {
         cells = rows[i].cells;
         for (j = 0; j < cells.length; j++) {
             if (cells[j].nodeName == 'TD')
-                BETA.regCells.push(cells[j]);
+                BETA.regCells.push(cells[j].firstChild);
         }
     }
     
@@ -129,7 +129,7 @@ function resetBeta(rom) {
         var th = document.createElement('th');
         var td = document.createElement('td');
         th.textContent = toHex(i) + ":";
-        td.textContent = '';
+        td.appendChild(document.createTextNode())
         tr.appendChild(th);
         tr.appendChild(td);
         BETA.memTab.appendChild(tr);
@@ -168,7 +168,7 @@ function refreshDisplay() {
     for (i = 0; i < 31; i++)
         BETA.regCells[i].textContent = toHex(CPU.regs[i]);
     for (i = 0; i < MMU.memory.length; i++)
-        BETA.memTab.rows[i].cells[1].textContent = toHex(MMU.memory[i]);
+        BETA.memTab.rows[i].cells[1].firstChild.textContent = toHex(MMU.memory[i]);
 }
 
 function initTerm() {
