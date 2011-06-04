@@ -3,6 +3,7 @@ var BETA = {
     div: null,
     ROMs: [],
     regCells: [],
+    memTab: null,
 };
 
 function toHex(x) {
@@ -82,6 +83,8 @@ function initBeta() {
                 BETA.regCells.push(cells[j]);
         }
     }
+    
+    BETA.memTab = document.getElementById('memtab').tBodies[0];
 
     $.ajaxSetup({
         beforeSend: function (xhr, settings) {
@@ -103,6 +106,7 @@ function loadROM() {
 }
 
 function resetBeta(rom) {
+    var i;
     BETA.term.clear();
 
     MMU.load(rom.rom);
@@ -117,6 +121,20 @@ function resetBeta(rom) {
                    BETA.term.type("--- Program terminated ----");
                    refreshDisplay();
                }});
+
+    while (BETA.memTab.firstChild)
+        BETA.memTab.removeChild(BETA.memTab.firstChild);
+    for (i = 0; i < rom.rom.length; i++) {
+        var tr = document.createElement('tr');
+        var th = document.createElement('th');
+        var td = document.createElement('td');
+        th.textContent = toHex(i) + ":";
+        td.textContent = '';
+        tr.appendChild(th);
+        tr.appendChild(td);
+        BETA.memTab.appendChild(tr);
+    }
+
     playPauseBeta();
 }
 
@@ -149,6 +167,8 @@ function refreshDisplay() {
 
     for (i = 0; i < 31; i++)
         BETA.regCells[i].textContent = toHex(CPU.regs[i]);
+    for (i = 0; i < MMU.memory.length; i++)
+        BETA.memTab.rows[i].cells[1].textContent = toHex(MMU.memory[i]);
 }
 
 function initTerm() {

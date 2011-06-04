@@ -40,3 +40,15 @@
 #regtab th {
     padding-left: 1em;
 }
+
+#memory {
+    border: 1px solid black;
+    overflow-y: scroll;
+    height: 100%;
+}
+
+
+#rightcol h3 {
+    margin: 0px;
+    text-align: center;
+}
