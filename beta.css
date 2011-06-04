@@ -19,7 +19,8 @@
 #registers {
     font-family: mono;
     float: left;
-    padding: 2em;
+    padding-left: 2em;
+    padding-right: 2em;
 }
 
 #PC {
@@ -47,10 +48,23 @@
     border: 1px solid black;
     overflow-y: scroll;
     height: 90%;
+    font-family: mono;
 }
 
+th, td {
+    padding: 2px;
+    font-size: 90%;
+}
 
-#rightcol h3 {
+#memtab {
+    border-collapse: collapse;
+}
+
+#memtab th {
+    border-right: 1px solid gray;
+}
+
+#memcol h3 {
     margin: 0px;
     text-align: center;
 }
