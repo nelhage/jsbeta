@@ -146,10 +146,18 @@ function playPauseBeta() {
     refreshDisplay();
 }
 
+function stepBeta() {
+    CPU.step();
+    refreshDisplay();
+}
+
 function refreshDisplay() {
     var div = document.getElementById('pcval');
     var button = document.getElementById('playpausebutton');
+    var step = document.getElementById('stepbutton');
     var i;
+
+    step.disabled = (CPU.halt || CPU.running());
 
     if (CPU.halt) {
         div.textContent = "<stopped>";
