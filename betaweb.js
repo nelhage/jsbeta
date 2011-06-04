@@ -7,7 +7,7 @@ var BETA = {
 };
 
 function toHex(x) {
-    if (x < 0) x += 0x80000000;
+    if (x < 0) x += 0x100000000;
     var str = x.toString(16);
     while (str.length < 8)
         str = '0' + str;
