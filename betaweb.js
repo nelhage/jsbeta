@@ -128,7 +128,7 @@ function resetBeta(rom) {
         var tr = document.createElement('tr');
         var th = document.createElement('th');
         var td = document.createElement('td');
-        th.textContent = toHex(i);
+        th.textContent = toHex(4*i);
         td.appendChild(document.createTextNode())
         tr.appendChild(th);
         tr.appendChild(td);
